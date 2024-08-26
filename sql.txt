@@ -1,0 +1,14 @@
+-- Insert movie data
+INSERT INTO MOVIE (id, backdrop_path, original_language, original_title, overview) VALUES
+(1, 'images/alien.jpg', 'en', 'Alien', 'A space horror classic.'),
+(2, 'images/badboys.jpg', 'en', 'Bad Boys', 'Action-packed thrill ride.');
+
+-- Insert genre IDs for the first movie
+INSERT INTO MOVIE_GENRE_IDS (MOVIE_ID, GENRE_IDS) VALUES
+(1, 27),
+(1, 878);
+
+-- Insert genre IDs for the second movie
+INSERT INTO MOVIE_GENRE_IDS (MOVIE_ID, GENRE_IDS) VALUES
+(2, 28),
+(2, 35);
