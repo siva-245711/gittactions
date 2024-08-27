@@ -17,7 +17,7 @@ This tutorial will guide you through running a base Docker image (`openjdk`) and
 **Step 3: Run the OpenJDK Base Image**
 - Now, run a container using the OpenJDK image:
   ```bash
-  docker run -it openjdk:17-jdk-slim
+  docker run -it openjdk:17-jdk-slim /bin/bash
   ```
 - **Explanation:**
   - `-it`: Interactive mode with a terminal session.
