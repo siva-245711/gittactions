@@ -7,18 +7,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/api/movies")
 public class MovieController {
 
-    @Autowired
-    private MovieService movieService;
+    private final MovieService movieService;
+
+    public MovieController(MovieService movieService) {
+        this.movieService = movieService;
+    }
 
     @GetMapping("/popular")
-    public ResponseEntity<Map<String, Object>> getPopularMovies() {
-        Map<String, Object> response = movieService.getPopularMoviesResponse();
-        return ResponseEntity.ok(response);
+    public ResponseEntity<List<String>> getPopularMovies() {
+        List<String> movies = movieService.getPopularMovies();
+        return ResponseEntity.ok(movies);
     }
 }
