@@ -67,7 +67,7 @@ This tutorial will guide you through running a base Docker image (`openjdk`) and
   EXPOSE 8080
 
   # Run the jar file
-  CMD ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
+  CMD ["java", "-jar", "target/movie-api-0.0.1-SNAPSHOT.jar"]
   ```
 
 **Step 3: Build the Docker Image**
