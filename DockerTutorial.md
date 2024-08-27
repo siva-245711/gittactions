@@ -1,120 +1,105 @@
-#### **Step 1: Understanding Docker and its Purpose**
-**Explanation:** 
-Docker is a tool designed to make it easier to create, deploy, and run applications by using containers. Containers allow a developer to package up an application with all the parts it needs, such as libraries and other dependencies, and ship it all out as one package.
+### Docker Tutorial: Running a Base Image and Adding Code
 
-**Technical Details:**
-- **Containers:** Think of them as lightweight, standalone executable packages of software that include everything needed to run a piece of software: code, runtime, system tools, libraries, and settings.
-- **Docker Image:** A Docker image is a lightweight, stand-alone, and executable software package that includes everything needed to run a piece of software, including the code, a runtime, libraries, environment variables, and configuration files.
+This tutorial will guide you through running a base Docker image (`openjdk`) and then adding your Java code using a Dockerfile.
+
+#### **Part 1: Running the Base OpenJDK Image**
+
+**Step 1: Install Docker**
+- **If you haven't already installed Docker,** you'll need to do so. Download and install Docker from the [official website](https://www.docker.com/products/docker-desktop/).
+
+**Step 2: Pull the OpenJDK Base Image**
+- Open your terminal (Command Prompt, PowerShell, or terminal on macOS/Linux).
+- Pull the OpenJDK base image from Docker Hub using the following command:
+  ```bash
+  docker pull openjdk:17-jdk-slim
+  ```
+
+**Step 3: Run the OpenJDK Base Image**
+- Now, run a container using the OpenJDK image:
+  ```bash
+  docker run -it openjdk:17-jdk-slim
+  ```
+- **Explanation:**
+  - `-it`: Interactive mode with a terminal session.
+  - `openjdk:17-jdk-slim`: The name of the base image.
   
-#### **Step 2: Write a Dockerfile**
-**Explanation:**
-A `Dockerfile` is a text document that contains all the commands to assemble an image. 
+- Once the container is running, you'll be inside the container's terminal. Here, you can run basic Java commands, but there's no application code yet—this is just the Java environment.
 
-**Technical Details:**
-- A Dockerfile typically starts with a base image, like `openjdk` for Java applications.
-- It then copies the necessary files into the container and sets up the environment to run the application.
+**Step 4: Explore the Container**
+- While inside the container, you can explore the file system and environment.
+  ```bash
+  java -version
+  ```
+- This command will show the version of Java installed in the container, confirming that you are indeed running Java in the Docker environment.
 
-**Creating a Dockerfile for the Spring Boot Project:**
+**Step 5: Exit the Container**
+- To exit the container, simply type `exit` and press Enter.
 
-1. **Navigate to the Project Directory:**
-   - Open your terminal or command prompt.
-   - Navigate to `C:\Users\gonch\Downloads\demo\demo`.
+---
+
+#### **Part 2: Adding Your Code Using a Dockerfile**
+
+**Step 1: Create a Dockerfile**
+- **Explanation:** A Dockerfile is a script that automates the process of building a Docker image. It specifies the base image, copies your application files, and defines how to run your application.
+
+1. **Navigate to Your Project Directory:**
+   - Open your terminal and navigate to `C:\Users\gonch\Downloads\demo\demo`.
 
 2. **Create a Dockerfile:**
    - In the root of your project (`C:\Users\gonch\Downloads\demo\demo`), create a file named `Dockerfile`.
 
-3. **Write the Following Content into the Dockerfile:**
-   ```dockerfile
-   # Use an official OpenJDK runtime as a parent image
-   FROM openjdk:17-jdk-slim
+**Step 2: Write the Dockerfile**
+- Add the following content to your Dockerfile:
+  ```dockerfile
+  # Use the OpenJDK 17 base image
+  FROM openjdk:17-jdk-slim
 
-   # Set the working directory in the container
-   WORKDIR /app
+  # Set the working directory in the container
+  WORKDIR /app
 
-   # Copy the current directory contents into the container at /app
-   COPY . /app
+  # Copy the current directory contents into the container at /app
+  COPY . /app
 
-   # Package the application
-   RUN ./mvnw package
+  # Package the application (this assumes you're using Maven Wrapper)
+  RUN ./mvnw package
 
-   # Make port 8080 available to the world outside this container
-   EXPOSE 8080
+  # Make port 8080 available to the world outside this container
+  EXPOSE 8080
 
-   # Run the jar file
-   CMD ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
-   ```
+  # Run the jar file
+  CMD ["java", "-jar", "target/demo-0.0.1-SNAPSHOT.jar"]
+  ```
 
-#### **Step 3: Build the Docker Image**
-**Explanation:**
-Once the Dockerfile is ready, you need to build the Docker image. This image is like a blueprint for running your application inside a Docker container.
+**Step 3: Build the Docker Image**
+- Now that you have a Dockerfile, build your Docker image using the following command:
+  ```bash
+  docker build -t movie-api-app .
+  ```
+- **Explanation:**
+  - `-t movie-api-app`: Tags the image with the name `movie-api-app`.
+  - `.`: Specifies the current directory as the context for the Docker build.
 
-**Technical Details:**
-- `docker build`: This command creates a Docker image from your Dockerfile.
+**Step 4: Run the Container with Your Application**
+- After building the image, run it using the following command:
+  ```bash
+  docker run -p 8080:8080 movie-api-app
+  ```
+- **Explanation:**
+  - `-p 8080:8080`: Maps port 8080 on your local machine to port 8080 in the container.
+  - `movie-api-app`: The name of the Docker image.
 
-**Command to Build the Docker Image:**
+**Step 5: Access Your Application**
+- With the container running, open a web browser and navigate to `http://localhost:8080/hello` or `http://localhost:8080/api/movies/popular`. You should see the responses from your Spring Boot application.
 
-In your terminal, run:
-```bash
-docker build -t movie-api-app .
-```
-- `-t movie-api-app`: Tags the image with the name `movie-api-app`.
-- The `.` at the end signifies the current directory as the build context.
+**Step 6: Stop the Container**
+- To stop the container, press `Ctrl + C` in the terminal where it's running.
 
-#### **Step 4: Run the Docker Container**
-**Explanation:**
-Now that you have an image, you can create and run a container from this image. 
+---
 
-**Technical Details:**
-- `docker run`: This command creates a new container from a Docker image and runs it.
+### Recap
 
-**Command to Run the Container:**
+1. **Pulled and ran the OpenJDK base image** to understand the environment your application will run in.
+2. **Created a Dockerfile** to define how to package and run your Spring Boot application.
+3. **Built and ran a Docker container** from that image, successfully deploying your application.
 
-```bash
-docker run -p 8080:8080 movie-api-app
-```
-- `-p 8080:8080`: Maps port 8080 on your local machine to port 8080 in the container.
-
-#### **Step 5: Access the Application**
-**Explanation:**
-With the container running, your Spring Boot application should be accessible via your browser.
-
-**Technical Details:**
-- Since the application exposes port 8080, you can access the endpoints like `http://localhost:8080/hello` and `http://localhost:8080/api/movies/popular`.
-
-**Testing:**
-
-Open a web browser and navigate to:
-- `http://localhost:8080/hello`
-- `http://localhost:8080/api/movies/popular`
-
-You should see the responses defined in your Spring Boot application.
-
-#### **Step 6: Managing Docker Containers**
-**Explanation:**
-You can stop, start, or delete containers as needed.
-
-**Technical Details:**
-- `docker stop <container_id>`: Stops a running container.
-- `docker start <container_id>`: Starts a stopped container.
-- `docker rm <container_id>`: Deletes a stopped container.
-
-**Command Examples:**
-
-```bash
-# List running containers
-docker ps
-
-# Stop a running container
-docker stop <container_id>
-
-# Remove a stopped container
-docker rm <container_id>
-```
-
-### **Recap**
-- **Docker** helps in packaging your application with all its dependencies to ensure it runs on any environment.
-- A **Dockerfile** is a blueprint that describes how to build a Docker image.
-- **Building** the Docker image packages your application.
-- **Running** the container deploys your application in an isolated environment.
-  
-Using the Feynman Technique, if you can explain this entire process to someone who is unfamiliar with Docker, you’ve likely understood it well.
+This tutorial helps you understand how to leverage Docker for a Java application by starting with a base image and layering your application code on top.
