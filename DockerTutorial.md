@@ -103,3 +103,131 @@ This tutorial will guide you through running a base Docker image (`openjdk`) and
 3. **Built and ran a Docker container** from that image, successfully deploying your application.
 
 This tutorial helps you understand how to leverage Docker for a Java application by starting with a base image and layering your application code on top.
+
+----------------------------
+
+Here are some exercises designed to reinforce the concepts learned in the tutorial:
+
+### **Exercise 1: Exploring the Base Image**
+**Objective:** Understand the base image environment and the tools available within it.
+
+**Instructions:**
+1. Pull and run the `openjdk:17-jdk-slim` base image as shown in the tutorial.
+2. Once inside the container, list all installed packages using the following command:
+   ```bash
+   dpkg -l
+   ```
+3. Try running a simple Java program inside the container. 
+   - Create a file named `HelloWorld.java` using a text editor like `nano` or `vi`.
+   - Write a simple "Hello, World!" program in Java.
+   - Compile and run it inside the container.
+   ```bash
+   javac HelloWorld.java
+   java HelloWorld
+   ```
+4. Exit the container.
+
+**Questions:**
+- What packages are installed by default in the `openjdk:17-jdk-slim` image?
+- How does the environment inside the container differ from your local machine?
+
+### **Exercise 2: Customizing the Dockerfile**
+**Objective:** Modify the Dockerfile to better understand how it controls the image-building process.
+
+**Instructions:**
+1. Add an environment variable to the Dockerfile that specifies the name of the application.
+   ```dockerfile
+   ENV APP_NAME=MovieAPI
+   ```
+2. Modify the `CMD` instruction to print the `APP_NAME` environment variable before running the application.
+   ```dockerfile
+   CMD echo "Starting $APP_NAME..." && java -jar target/demo-0.0.1-SNAPSHOT.jar
+   ```
+3. Rebuild the Docker image and run it.
+   ```bash
+   docker build -t movie-api-app-custom .
+   docker run -p 8080:8080 movie-api-app-custom
+   ```
+
+**Questions:**
+- What changes do you notice when running the container after adding the `ENV` variable and modifying the `CMD` instruction?
+- How can you further customize the environment in your Docker container?
+
+### **Exercise 3: Working with Volumes**
+**Objective:** Understand how to persist data in Docker containers using volumes.
+
+**Instructions:**
+1. Modify your Dockerfile to use an external configuration file for your Spring Boot application.
+   - Create a `config` directory on your local machine and add a `custom-application.properties` file with some Spring Boot configurations.
+2. Update your Dockerfile to copy this configuration file into the container.
+   ```dockerfile
+   COPY config/custom-application.properties /app/config/application.properties
+   ```
+3. Rebuild the Docker image and run the container with a volume that maps your local `config` directory to the `/app/config` directory in the container.
+   ```bash
+   docker run -p 8080:8080 -v $(pwd)/config:/app/config movie-api-app
+   ```
+4. Check if the application runs with the custom configuration.
+
+**Questions:**
+- How does using a volume affect the container's ability to use external resources?
+- What are some potential use cases for using volumes in Docker?
+
+### **Exercise 4: Debugging a Docker Container**
+**Objective:** Learn how to debug a running Docker container.
+
+**Instructions:**
+1. Run the Docker container in detached mode:
+   ```bash
+   docker run -d -p 8080:8080 movie-api-app
+   ```
+2. List all running containers and find the container ID of your running application:
+   ```bash
+   docker ps
+   ```
+3. Use the container ID to attach to the running container and explore the file system:
+   ```bash
+   docker exec -it <container_id> /bin/bash
+   ```
+4. Check the logs of the running container:
+   ```bash
+   docker logs <container_id>
+   ```
+
+**Questions:**
+- What are some methods to troubleshoot issues in a running Docker container?
+- How can you inspect and modify the state of a running container?
+
+### **Exercise 5: Multi-Stage Builds**
+**Objective:** Learn how to optimize Docker images using multi-stage builds.
+
+**Instructions:**
+1. Research multi-stage builds in Docker.
+2. Modify your Dockerfile to use a multi-stage build. For example, use one stage to build the application and another to run it.
+   ```dockerfile
+   # Stage 1: Build
+   FROM openjdk:17-jdk-slim as build
+   WORKDIR /app
+   COPY . /app
+   RUN ./mvnw package
+
+   # Stage 2: Run
+   FROM openjdk:17-jdk-slim
+   WORKDIR /app
+   COPY --from=build /app/target/demo-0.0.1-SNAPSHOT.jar /app/
+   EXPOSE 8080
+   CMD ["java", "-jar", "demo-0.0.1-SNAPSHOT.jar"]
+   ```
+3. Build and run the image.
+   ```bash
+   docker build -t movie-api-app-multi-stage .
+   docker run -p 8080:8080 movie-api-app-multi-stage
+   ```
+
+**Questions:**
+- What are the advantages of using multi-stage builds?
+- How does the size of the Docker image compare before and after implementing multi-stage builds?
+
+### **Summary**
+
+These exercises are designed to solidify your understanding of Docker by having you explore the base image, customize Dockerfiles, work with volumes, debug containers, and optimize images using multi-stage builds. By completing these exercises, you should gain a deeper, more practical understanding of Docker and its capabilities.
