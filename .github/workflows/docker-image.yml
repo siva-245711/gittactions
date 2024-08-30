@@ -11,7 +11,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    environment: topkuber
+    environment: dockercandy
 
     steps:
       - name: Checkout code
@@ -32,7 +32,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: topkuber/backendtitan6:latest
+          tags: sivanagendra809/docker-github-actions
           load: true
 
       - name: Logout from DockerHub
