@@ -9,7 +9,7 @@ public class JavaController {
 
     @PostMapping("/greet")
     public String greet(@RequestBody Greeting greeting) {
-        return "Hello, " + greeting.getName() + "!!!";
+        return "Hello, " + greeting.getName() + "!";
     }
 }
 
